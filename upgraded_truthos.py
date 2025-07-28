@@ -53,7 +53,7 @@ class TruthOS_Upgraded:
         if soft_flags:
             self.log.append(f"⚠️ Ideological Contradiction Detected: {soft_flags}")
 
-        # Revised verdict logic
+        # Verdict logic
         if contradiction:
             verdict = "⊘"
         elif truth_score >= 8.5 and not ambiguity_flags and recursion_score >= 7.0:
@@ -112,18 +112,20 @@ class TruthOS_Upgraded:
         return [p for p in patterns if re.search(p, text, re.I)]
 
     def recursive_consistency_check(self, units):
+        if len(units) <= 1:
+            return 2.5
         matches = 0
         for u in units:
             for other in units:
                 if u != other and (u in other or other in u):
                     matches += 1
-        return min(round((matches / max(1, len(units))) * 10, 2), 10)
+        return min(round((matches / len(units)) * 10, 2), 10)
 
     def truth_weight(self, fft_vals, entropy, recursion_score, units):
-        h = min(sum(fft_vals[:3]) / 300, 1.0)
-        e = min(entropy / 8, 1.0)
-        r = min(recursion_score / 12, 1.0)
-        u = min(len(units) / 10.0, 1.0)
+        h = min(sum(fft_vals[:3]) / 150, 1.0)
+        e = min(entropy / 5.5, 1.0)
+        r = min(recursion_score / 8.0, 1.0)
+        u = min(len(units) / 6.0, 1.0)
         return round((h + e + r + u) / 4 * 10, 2)
 
     def halt(self, reason):

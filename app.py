@@ -38,4 +38,4 @@ if st.button("Verify"):
         )
 
 st.markdown("---")
-st.caption("TruthOS Upgraded • Symbolic Epistemics for Everyone")
+st.caption("TruthOS Upgraded • Balanced Scoring Patch")
