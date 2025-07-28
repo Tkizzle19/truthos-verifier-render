@@ -35,7 +35,7 @@ class TruthOS_Upgraded:
         containment_flags = self.detect_containment_language(operation)
         recursion_score = self.recursive_consistency_check(segmented_units)
 
-        penalty = len(ambiguity_flags) * 0.15 + len(containment_flags) * 0.2
+        penalty = len(ambiguity_flags) * 0.05 + len(containment_flags) * 0.1
         base_score = self.truth_weight(fft_values, entropy, recursion_score, segmented_units)
         truth_score = max(0.0, round(base_score - penalty, 2))
 
@@ -53,13 +53,11 @@ class TruthOS_Upgraded:
         if soft_flags:
             self.log.append(f"⚠️ Ideological Contradiction Detected: {soft_flags}")
 
-        # Verdict logic
+        # Verdict logic (adjusted)
         if contradiction:
             verdict = "⊘"
-        elif truth_score >= 8.5 and not ambiguity_flags and recursion_score >= 7.0:
+        elif truth_score >= 8.0 and recursion_score >= 5.0:
             verdict = "T"
-        elif soft_flags:
-            verdict = "◬"
         elif truth_score >= 6.5:
             verdict = "Δ"
         elif truth_score >= 4.5:
@@ -113,7 +111,7 @@ class TruthOS_Upgraded:
 
     def recursive_consistency_check(self, units):
         if len(units) <= 1:
-            return 2.5
+            return 4.0
         matches = 0
         for u in units:
             for other in units:
