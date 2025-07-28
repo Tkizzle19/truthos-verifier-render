@@ -1,11 +1,16 @@
 import spacy
+from spacy.cli import download
 import re
 import math
 import hashlib
 import numpy as np
 from numpy.fft import fft
 
-nlp = spacy.load("en_core_web_sm")
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
 class TruthOS_Upgraded:
     def __init__(self):
