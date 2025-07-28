@@ -25,11 +25,7 @@ class TruthOS_Upgraded:
             return self.halt("Hard contradiction")
 
         soft_flags = self.soft_contradiction_check(operation)
-        if soft_flags:
-            self.log.append(f"⚠️ Soft Contradiction Detected: {soft_flags}")
-
-        if self.semantic_contradiction_check(operation):
-            return self.halt("Semantic contradiction")
+        contradiction = self.semantic_contradiction_check(operation)
 
         segmented_units = self.symbolic_shor(operation)
         named_entities = self.named_entity_recognition(operation)
@@ -39,7 +35,7 @@ class TruthOS_Upgraded:
         containment_flags = self.detect_containment_language(operation)
         recursion_score = self.recursive_consistency_check(segmented_units)
 
-        penalty = len(ambiguity_flags) * 0.1 + len(containment_flags) * 0.15
+        penalty = len(ambiguity_flags) * 0.15 + len(containment_flags) * 0.2
         base_score = self.truth_weight(fft_values, entropy, recursion_score, segmented_units)
         truth_score = max(0.0, round(base_score - penalty, 2))
 
@@ -54,16 +50,21 @@ class TruthOS_Upgraded:
             self.log.append(f"⚠️ Ambiguity Detected: {ambiguity_flags}")
         if containment_flags:
             self.log.append(f"⚠️ Containment Detected: {containment_flags}")
+        if soft_flags:
+            self.log.append(f"⚠️ Ideological Contradiction Detected: {soft_flags}")
 
-        if truth_score >= 9.0:
+        # Revised verdict logic
+        if contradiction:
+            verdict = "⊘"
+        elif truth_score >= 8.5 and not ambiguity_flags and recursion_score >= 7.0:
             verdict = "T"
         elif soft_flags:
             verdict = "◬"
-        elif truth_score >= 7.0:
+        elif truth_score >= 6.5:
             verdict = "Δ"
-        elif truth_score >= 5.0:
+        elif truth_score >= 4.5:
             verdict = "?"
-        elif truth_score > 3.0:
+        elif truth_score > 2.5:
             verdict = "⊗"
         else:
             verdict = "⊘"
@@ -118,12 +119,12 @@ class TruthOS_Upgraded:
                     matches += 1
         return min(round((matches / max(1, len(units))) * 10, 2), 10)
 
-    def truth_weight(self, fft_vals, entropy, recursion, units):
-        h = sum(fft_vals[:3]) / 100
-        e = min(entropy / 6, 1.5)
-        r = recursion / 10
-        u = len(units) / 5.0
-        return min((h + e + r + u) / 4 * 10, 10)
+    def truth_weight(self, fft_vals, entropy, recursion_score, units):
+        h = min(sum(fft_vals[:3]) / 300, 1.0)
+        e = min(entropy / 8, 1.0)
+        r = min(recursion_score / 12, 1.0)
+        u = min(len(units) / 10.0, 1.0)
+        return round((h + e + r + u) / 4 * 10, 2)
 
     def halt(self, reason):
         self.log.append(f"⛔ HALTED: {reason}")
